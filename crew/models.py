@@ -20,9 +20,18 @@ class EducationCenter(models.Model):
 class Rank(models.Model):
     name = models.CharField(max_length=20)
 
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return self.name
+
 
 class Certificate(models.Model):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class CertificationMatrix(models.Model):
@@ -63,6 +72,17 @@ class CrewMember(models.Model):
     medical_center = models.ManyToManyField(MedicalCenter, through='CrewMedicalExamination')
     vessel = models.ManyToManyField(Vessel, through='CrewOnVessel')
     rank = models.ManyToManyField(Rank, through='CrewPosition')
+
+    def __str__(self):
+        return f'{self.name} {self.father_name} {self.surname}'
+
+    def get_rank(self):
+        return ','.join(
+            [
+                rank for rank in self.rank.filter(crewposition__hired_to__isnull=True)
+                .values_list('name', flat=True).all()
+            ]
+        )
 
 
 class CrewCertification(models.Model):
