@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crew list</title>
+</head>
+<body>
+  <h2>Crew list of your group</h2>
+    <ul>
+      {% for crewmember in crew %}
+        <li>{{ crewmember.name }} {{ crewmember.surname }} - {{ crewmember.vessel.all|first }} {{ crewmember.working_status }}</li>
+      {% endfor %}
+    </ul>
+</body>
+</html>
