@@ -1,10 +1,11 @@
 from django.contrib import admin
 from . import models
+from vessel.models import Vessel
 
 
 @admin.register(models.CrewMember)
 class CrewMemberAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'surname', 'get_rank', 'working_status']
+    list_display = ['name', 'surname', 'get_rank', 'working_status', 'get_vessel']
 
 
 @admin.register(models.Rank)
@@ -19,24 +20,59 @@ class CertificateAdmin(admin.ModelAdmin):
 
 @admin.register(models.CertificationMatrix)
 class CertificationMatrixAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['get_rank', 'get_certificate']
+
+
+@admin.register(models.CrewCertification)
+class CrewCertificationAdmin(admin.ModelAdmin):
+    list_display = ['get_crew', 'get_certificate', 'valid_to']
+
+
+@admin.register(models.CrewMedicalExamination)
+class CrewMedicalExaminationAdmin(admin.ModelAdmin):
+    list_display = ['get_crew', 'get_medical_center', 'valid_to']
+
 
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'iso_code']
 
 
 @admin.register(models.City)
 class CityAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'get_country']
 
 
 @admin.register(models.EducationCenter)
 class EducationCenterAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'get_location']
 
 
 @admin.register(models.MedicalCenter)
 class MedicalCenterAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'get_location']
 
+
+@admin.register(Vessel)
+class VesselAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
+@admin.register(models.CrewOnVessel)
+class CrewOnVesselAdmin(admin.ModelAdmin):
+    list_display = ['get_crew', 'get_vessel', 'signed_on', 'signed_off']
+
+
+@admin.register(models.CrewPosition)
+class CrewPositionAdmin(admin.ModelAdmin):
+    list_display = ['get_crew', 'get_rank', 'hired_from', 'hired_to']
+
+
+@admin.register(models.SalaryMatrix)
+class SalaryMatrixAdmin(admin.ModelAdmin):
+    list_display = ['get_rank', 'basic', 'performance_bonus', 'leave_payment', 'get_total']
+
+
+@admin.register(models.Contract)
+class ContractAdmin(admin.ModelAdmin):
+    list_display = ['manager', 'get_crew', 'duration', 'offset', 'signed_date']
