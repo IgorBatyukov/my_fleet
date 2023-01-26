@@ -1,6 +1,5 @@
 from django.contrib import admin
 from . import models
-from vessel.models import Vessel
 
 
 @admin.register(models.CrewMember)
@@ -33,16 +32,6 @@ class CrewMedicalExaminationAdmin(admin.ModelAdmin):
     list_display = ['get_crew', 'get_medical_center', 'valid_to']
 
 
-@admin.register(models.Country)
-class CountryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'iso_code']
-
-
-@admin.register(models.City)
-class CityAdmin(admin.ModelAdmin):
-    list_display = ['name', 'get_country']
-
-
 @admin.register(models.EducationCenter)
 class EducationCenterAdmin(admin.ModelAdmin):
     list_display = ['name', 'get_location']
@@ -51,11 +40,6 @@ class EducationCenterAdmin(admin.ModelAdmin):
 @admin.register(models.MedicalCenter)
 class MedicalCenterAdmin(admin.ModelAdmin):
     list_display = ['name', 'get_location']
-
-
-@admin.register(Vessel)
-class VesselAdmin(admin.ModelAdmin):
-    list_display = ['name']
 
 
 @admin.register(models.CrewOnVessel)
