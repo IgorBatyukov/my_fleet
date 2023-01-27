@@ -148,7 +148,7 @@ class CrewMedicalExamination(models.Model):
 
 class CrewOnVessel(models.Model):
     crew = models.ForeignKey(CrewMember, on_delete=models.CASCADE)
-    vsl = models.ForeignKey(Vessel, on_delete=models.DO_NOTHING)
+    vessel = models.ForeignKey(Vessel, on_delete=models.DO_NOTHING)
     signed_on = models.DateField()
     signed_off = models.DateField(null=True, blank=True)
 
@@ -162,7 +162,7 @@ class CrewOnVessel(models.Model):
         return self.crew
 
     def get_vessel(self):
-        return self.vsl
+        return self.vessel
 
 
 class CrewPosition(models.Model):
