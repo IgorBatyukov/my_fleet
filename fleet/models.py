@@ -14,14 +14,14 @@ class Fleet(models.Model):
         return self.vessel_set.all()
 
 
-class Type(models.Model):
+class VesselType(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
         return self.name
 
 
-class Flag(models.Model):
+class VesselFlag(models.Model):
     name = models.CharField(max_length=30)
 
     def __str__(self):
@@ -39,13 +39,13 @@ class ClassSociety(models.Model):
 class Vessel(models.Model):
     name = models.CharField(max_length=25, unique=True)
     fleet = models.ForeignKey(Fleet, on_delete=models.DO_NOTHING)
-    type = models.ForeignKey(Type, on_delete=models.DO_NOTHING)
+    type = models.ForeignKey(VesselType, on_delete=models.DO_NOTHING)
     imo = models.IntegerField(unique=True)
     length = models.SmallIntegerField()
     breadth = models.SmallIntegerField()
     grt = models.IntegerField()
     nrt = models.IntegerField()
-    flag = models.ForeignKey(Flag, on_delete=models.DO_NOTHING)
+    flag = models.ForeignKey(VesselFlag, on_delete=models.DO_NOTHING)
     class_society = models.ForeignKey(ClassSociety, on_delete=models.DO_NOTHING)
 
     def __str__(self):
