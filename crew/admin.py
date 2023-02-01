@@ -32,16 +32,6 @@ class CrewMedicalExaminationAdmin(admin.ModelAdmin):
     list_display = ['get_crew', 'get_medical_center', 'valid_to']
 
 
-@admin.register(models.EducationCenter)
-class EducationCenterAdmin(admin.ModelAdmin):
-    list_display = ['name', 'get_location']
-
-
-@admin.register(models.MedicalCenter)
-class MedicalCenterAdmin(admin.ModelAdmin):
-    list_display = ['name', 'get_location']
-
-
 @admin.register(models.CrewOnVessel)
 class CrewOnVesselAdmin(admin.ModelAdmin):
     list_display = ['get_crew', 'get_vessel', 'signed_on', 'signed_off']

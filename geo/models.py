@@ -40,3 +40,24 @@ class SeaPort(models.Model):
     def __str__(self):
         return f'{self.name}, {self.country}'
 
+
+class EducationCenter(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def get_location(self):
+        return self.city
+
+
+class MedicalCenter(models.Model):
+    name = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def get_location(self):
+        return self.city

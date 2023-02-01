@@ -1,18 +1,7 @@
 from django.db import models
 from fleet.models import Vessel
-from geo.models import City
+from geo.models import City, EducationCenter, MedicalCenter
 from personnel.models import Employee
-
-
-class EducationCenter(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-    def get_location(self):
-        return self.city
 
 
 class Rank(models.Model):
@@ -47,17 +36,6 @@ class CertificationMatrix(models.Model):
 
     def get_certificate(self):
         return self.certificate
-
-
-class MedicalCenter(models.Model):
-    name = models.CharField(max_length=50)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-    def get_location(self):
-        return self.city
 
 
 class CrewMember(models.Model):
