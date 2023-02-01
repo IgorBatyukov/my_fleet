@@ -10,3 +10,18 @@ class FleetAdmin(admin.ModelAdmin):
 @admin.register(models.Vessel)
 class VesselAdmin(admin.ModelAdmin):
     list_display = ['name', 'get_fleet']
+
+
+@admin.register(models.VesselType)
+class VesselTypeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.VesselFlag)
+class VesselFlagAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.ClassSociety)
+class ClassSocietyAdmin(admin.ModelAdmin):
+    pass

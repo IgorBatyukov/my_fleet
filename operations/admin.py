@@ -4,12 +4,13 @@ from . import models
 
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'get_location', 'office_phone_num', 'mobile_phone_num_1', 'email_1']
+    empty_value_display = 'not provided'
 
 
 @admin.register(models.Voyage)
 class VoyageAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['voy_num', 'get_vessel', 'type', 'get_departure_port', 'is_completed']
 
 
 @admin.register(models.Cargo)
