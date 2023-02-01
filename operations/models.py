@@ -122,9 +122,18 @@ class BunkerOps(models.Model):
     ops_date_time = models.DateTimeField()
     utc_offset = models.FloatField()
     voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
+    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     location = models.ForeignKey(SeaPort, on_delete=models.CASCADE)
     bunker = models.ForeignKey(Bunker, on_delete=models.CASCADE)
     supplier = models.CharField(max_length=100)
+
+
+class BunkerDailyBalance(models.Model):
+    date_time = models.DateTimeField()
+    utc_offset = models.FloatField()
+    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
+    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
+    bunker = models.ManyToManyField(Bunker)
 
 
 class VesselPosition(models.Model):
