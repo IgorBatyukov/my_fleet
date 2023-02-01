@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 from fleet.models import Vessel
 from geo.models import SeaPort
 
@@ -7,15 +8,23 @@ class Agency(models.Model):
     name = models.CharField(max_length=100)
     location = models.ForeignKey(SeaPort, on_delete=models.CASCADE)
     office_phone_num = models.CharField(max_length=25)
-    mobile_phone_num_1 = models.CharField(max_length=25)
+    mobile_phone_num_1 = models.CharField(max_length=25, verbose_name='mobile phone num')
     mobile_phone_num_2 = models.CharField(max_length=25)
-    email_1 = models.EmailField()
+    email_1 = models.EmailField(verbose_name='main e-mail')
     email_2 = models.EmailField()
+
+    def __str__(self):
+        return f'{self.name}, {self.location}'
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['name', 'location'], name='unique_agency')
         ]
+        verbose_name_plural = 'agencies'
+
+    @admin.display(description='location')
+    def get_location(self):
+        return self.location
 
 
 class Voyage(models.Model):
@@ -35,6 +44,17 @@ class Voyage(models.Model):
     eta = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
     agency = models.ManyToManyField(Agency)
+
+    def __str__(self):
+        return f'{self.vessel} - {self.voy_num}: {self.type}'
+
+    @admin.display(description='vessel')
+    def get_vessel(self):
+        return self.vessel
+
+    @admin.display(description='departure port')
+    def get_departure_port(self):
+        return self.departure
 
 
 class Cargo(models.Model):
@@ -63,6 +83,7 @@ class Cargo(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'cargoes'
 
 
 class CargoOps(models.Model):
@@ -92,6 +113,7 @@ class CargoOps(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['vessel', 'cargo', 'ops_date_time'], name='unique_cargo_ops')
         ]
+        verbose_name = 'cargo operation'
 
 
 class Bunker(models.Model):
@@ -127,6 +149,9 @@ class BunkerOps(models.Model):
     bunker = models.ForeignKey(Bunker, on_delete=models.CASCADE)
     supplier = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = 'bunker operation'
+
 
 class BunkerDailyBalance(models.Model):
     date_time = models.DateTimeField()
@@ -134,6 +159,9 @@ class BunkerDailyBalance(models.Model):
     voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
     vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     bunker = models.ManyToManyField(Bunker)
+
+    class Meta:
+        verbose_name = 'Daily bunker report'
 
 
 class VesselPosition(models.Model):
