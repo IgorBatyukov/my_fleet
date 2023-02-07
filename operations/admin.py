@@ -10,20 +10,20 @@ class AgencyAdmin(admin.ModelAdmin):
 
 @admin.register(models.Voyage)
 class VoyageAdmin(admin.ModelAdmin):
-    list_display = ['voy_num', 'get_vessel', 'type', 'get_departure_port', 'is_completed']
+    list_display = ['voyage_num', 'get_vessel']
 
 
-@admin.register(models.Cargo)
-class CargoAdmin(admin.ModelAdmin):
-    pass
+@admin.register(models.CargoType)
+class CargoTypesAdmin(admin.ModelAdmin):
+    list_display = ['name', 'imo_class']
 
 
 @admin.register(models.CargoOps)
 class CargoOpsAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['get_voyage', 'ops_date_time', 'cargo', 'operation']
 
 
-@admin.register(models.Bunker)
+@admin.register(models.BunkerType)
 class BunkerAdmin(admin.ModelAdmin):
     pass
 
@@ -33,13 +33,13 @@ class BunkerOpsAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.BunkerDailyBalance)
-class BunkerDailyBalanceAdmin(admin.ModelAdmin):
+@admin.register(models.BunkerReport)
+class BunkerReportAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.VesselPosition)
-class VesselPositionAdmin(admin.ModelAdmin):
+@admin.register(models.VesselPositionReport)
+class VesselPositionReportAdmin(admin.ModelAdmin):
     pass
 
 

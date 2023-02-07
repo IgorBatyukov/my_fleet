@@ -36,54 +36,45 @@ class Voyage(models.Model):
         (LOADED, 'Laden leg'),
     ]
 
-    voy_num = models.CharField(max_length=15)
+    voyage_num = models.CharField(max_length=15)
     vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, choices=VOYAGE_TYPE, default=BALLAST)
-    departure = models.ForeignKey(SeaPort, on_delete=models.CASCADE, related_name='departure_port')
-    destination = models.ManyToManyField(SeaPort, related_name='destination_port')
-    eta = models.DateTimeField()
-    is_completed = models.BooleanField(default=False)
-    agency = models.ManyToManyField(Agency)
+    departure = models.ManyToManyField(SeaPort, through='DeparturePort', related_name='departure_port')
+    destination = models.ManyToManyField(SeaPort, through='DestinationPort', related_name='arrival_port')
 
     def __str__(self):
-        return f'{self.vessel} - {self.voy_num}: {self.type}'
+        return f'{self.vessel} - {self.voyage_num}: {self.type}'
 
     @admin.display(description='vessel')
     def get_vessel(self):
         return self.vessel
 
-    @admin.display(description='departure port')
-    def get_departure_port(self):
-        return self.departure
+
+class DestinationPort(models.Model):
+    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
+    seaport = models.ForeignKey(SeaPort, on_delete=models.CASCADE)
+    agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True, blank=True)
+    eta = models.DateTimeField()
+    arrival_date_time = models.DateTimeField(null=True, blank=True)
+    utc_offset = models.FloatField(null=True, blank=True)
 
 
-class Cargo(models.Model):
-    CRUDE_OIL = 'crude_oil'
-    FUEL_OIL = 'fuel_oil'
-    DIESEL_OIL = 'diesel_oil'
-    GRAIN_BULK = 'grain_bulk'
-    COAL_BULK = 'coal_bulk'
-    GENERAL_CARGO = 'general_cargo'
+class DeparturePort(models.Model):
+    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
+    seaport = models.ForeignKey(SeaPort, on_delete=models.CASCADE)
+    departure_date_time = models.DateTimeField()
+    utc_offset = models.FloatField(null=True, blank=True)
 
-    CARGO_TYPES = [
-        (CRUDE_OIL, 'Crude Oil'),
-        (FUEL_OIL, 'Fuel Oil'),
-        (DIESEL_OIL, 'Diesel Oil'),
-        (GRAIN_BULK, 'Grain in Bulk'),
-        (COAL_BULK, 'Coal in Bulk'),
-        (GENERAL_CARGO, 'General Cargo'),
-    ]
 
+class CargoType(models.Model):
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=20, choices=CARGO_TYPES, default=CRUDE_OIL)
-    vessel = models.ManyToManyField(Vessel)
+    imo_class = models.SmallIntegerField()
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name']
-        verbose_name_plural = 'cargoes'
 
 
 class CargoOps(models.Model):
@@ -95,76 +86,56 @@ class CargoOps(models.Model):
         (DISCHARGING, 'Discharging'),
     ]
 
-    ops_date_time = models.DateTimeField()
+    ops_date_time = models.DateTimeField(verbose_name='date time UTC')
     utc_offset = models.FloatField()
     voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
-    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
-    cargo = models.OneToOneField(Cargo, on_delete=models.CASCADE)
-    type = models.CharField(max_length=20, choices=CARGO_OPS_TYPES, default=LOADING)
+    cargo = models.CharField(max_length=100)
+    cargo_type = models.ForeignKey(CargoType, on_delete=models.CASCADE)
+    operation = models.CharField(max_length=15, choices=CARGO_OPS_TYPES, default=LOADING)
     quantity = models.FloatField()
     bl_number = models.CharField(max_length=30)
     shipper = models.CharField(max_length=70)
     consignee = models.CharField(max_length=70)
 
     def __str__(self):
-        return f'{self.vessel} - {self.type}: {self.ops_date_time}'
+        return f'{self.voyage} - {self.operation}'
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['vessel', 'cargo', 'ops_date_time'], name='unique_cargo_ops')
+            models.UniqueConstraint(fields=['voyage', 'cargo', 'ops_date_time'], name='unique_cargo_ops')
         ]
         verbose_name = 'cargo operation'
 
+    @admin.display(description='voyage')
+    def get_voyage(self):
+        return self.voyage
 
-class Bunker(models.Model):
-    FUEL_OIL = 'FO'
-    DIESEL_OIL = 'DO'
-    MARINE_GAS_OIL = 'MGO'
-    VERY_LOW_SULPHUR_FUEL_OIL = 'VLSFO'
 
-    BUNKER_TYPES = [
-        (FUEL_OIL, 'Fuel Oil'),
-        (DIESEL_OIL, 'Diesel Oil'),
-        (MARINE_GAS_OIL, 'Marine Gas Oil'),
-        (VERY_LOW_SULPHUR_FUEL_OIL, 'Very Low Sulphur Fuel Oil'),
-    ]
-
-    name = models.CharField(max_length=100)
-    type = models.CharField(max_length=20, choices=BUNKER_TYPES, default=DIESEL_OIL)
-    vessel = models.ManyToManyField(Vessel)
+class BunkerType(models.Model):
+    type = models.CharField(max_length=20, unique=True)
+    short_name = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.name
+        return self.type
 
     class Meta:
-        ordering = ['name']
+        ordering = ['type']
 
 
 class BunkerOps(models.Model):
     ops_date_time = models.DateTimeField()
     utc_offset = models.FloatField()
-    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
+    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE, null=True, blank=True)
     vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
     location = models.ForeignKey(SeaPort, on_delete=models.CASCADE)
-    bunker = models.ForeignKey(Bunker, on_delete=models.CASCADE)
+    bunker = models.ForeignKey(BunkerType, on_delete=models.CASCADE)
     supplier = models.CharField(max_length=100)
 
     class Meta:
         verbose_name = 'bunker operation'
 
 
-class BunkerDailyBalance(models.Model):
-    date_time = models.DateTimeField()
-    utc_offset = models.FloatField()
-    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE)
-    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
-    bunker = models.ManyToManyField(Bunker)
-
-    class Meta:
-        verbose_name = 'Daily bunker report'
-
-
-class VesselPosition(models.Model):
+class VesselPositionReport(models.Model):
     AT_SEA = 'sea'
     IN_PORT = 'port'
     DRIFTING = 'drifting'
@@ -177,8 +148,9 @@ class VesselPosition(models.Model):
         (ANCHORAGE, 'Vessel is at anchorage'),
     ]
 
-    voy_num = models.ForeignKey(Voyage, on_delete=models.CASCADE)
-    report_date = models.DateField()
+    voyage = models.ForeignKey(Voyage, on_delete=models.CASCADE, verbose_name='Voyage Number')
+    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
+    report_date_time = models.DateTimeField()
     utc_offset = models.FloatField()
     current_position = models.CharField(max_length=25)
     operation = models.CharField(max_length=15, choices=VESSEL_OPERATION, default=AT_SEA)
@@ -190,4 +162,21 @@ class VesselPosition(models.Model):
     swell_dir = models.PositiveIntegerField()
     wind_bft = models.PositiveIntegerField()
     wind_dir = models.PositiveIntegerField()
+    bunker = models.ManyToManyField(BunkerType, through='BunkerReport')
+
+    class Meta:
+        ordering = ['voyage', 'report_date_time']
+        constraints = [
+            models.UniqueConstraint(fields=['voyage', 'vessel', 'report_date_time'], name='unique_report')
+        ]
+
+
+class BunkerReport(models.Model):
+    vessel_position = models.ForeignKey(VesselPositionReport, on_delete=models.CASCADE)
+    vessel = models.ForeignKey(Vessel, on_delete=models.CASCADE)
+    bunker = models.ForeignKey(BunkerType, on_delete=models.CASCADE)
+    quantity = models.FloatField()
+
+    class Meta:
+        verbose_name = 'Daily bunker report'
 
