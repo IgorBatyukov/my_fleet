@@ -12,9 +12,12 @@ class Position(models.Model):
 
 class Employee(models.Model):
 
+    MARRIED = 'married'
+    SINGLE = 'single'
+
     MARRIAGE_STATUS = [
-        ('married', 'Married'),
-        ('single', 'Single'),
+        (MARRIED, 'Married'),
+        (SINGLE, 'Single'),
     ]
 
     name = models.CharField(max_length=15)
@@ -24,7 +27,7 @@ class Employee(models.Model):
     phone = models.CharField(max_length=20)
     email = models.EmailField()
     location = models.ForeignKey(City, on_delete=models.DO_NOTHING)
-    marriage_status = models.CharField(max_length=7, choices=MARRIAGE_STATUS, default='single')
+    marriage_status = models.CharField(max_length=7, choices=MARRIAGE_STATUS, default=SINGLE)
     position = models.ManyToManyField(Position, through='EmployeePosition', verbose_name='position')
     fleet = models.ManyToManyField(Fleet, through='EmployeePosition', verbose_name='fleet')
 
@@ -34,8 +37,8 @@ class Employee(models.Model):
 
 class EmployeePosition(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    position = models.ForeignKey(Position, on_delete=models.DO_NOTHING)
-    fleet = models.ForeignKey(Fleet, on_delete=models.DO_NOTHING)
+    position = models.ForeignKey(Position, on_delete=models.CASCADE)
+    fleet = models.ForeignKey(Fleet, on_delete=models.CASCADE)
     hired_from = models.DateField()
     hired_to = models.DateField(null=True, blank=True)
 
