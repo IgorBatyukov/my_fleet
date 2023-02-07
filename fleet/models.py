@@ -38,15 +38,16 @@ class ClassSociety(models.Model):
 
 class Vessel(models.Model):
     name = models.CharField(max_length=25, unique=True)
-    fleet = models.ForeignKey(Fleet, on_delete=models.DO_NOTHING)
-    type = models.ForeignKey(VesselType, on_delete=models.DO_NOTHING)
+    former_name = models.CharField(max_length=25, null=True, blank=True)
+    fleet = models.ForeignKey(Fleet, on_delete=models.SET_NULL, null=True, blank=True)
+    type = models.ForeignKey(VesselType, on_delete=models.CASCADE)
     imo = models.IntegerField(unique=True)
     length = models.SmallIntegerField()
     breadth = models.SmallIntegerField()
     grt = models.IntegerField()
     nrt = models.IntegerField()
-    flag = models.ForeignKey(VesselFlag, on_delete=models.DO_NOTHING)
-    class_society = models.ForeignKey(ClassSociety, on_delete=models.DO_NOTHING)
+    flag = models.ForeignKey(VesselFlag, on_delete=models.SET_NULL, null=True, blank=True)
+    class_society = models.ForeignKey(ClassSociety, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
