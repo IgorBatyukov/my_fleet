@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from django.urls import reverse
 from fleet.models import Vessel
 from geo.models import City, EducationCenter, MedicalCenter, SeaPort
 from personnel.models import Employee
@@ -70,27 +71,26 @@ class CrewMember(models.Model):
     certificates = models.ManyToManyField(Certificate, through='CrewCertification')
     medical_center = models.ManyToManyField(MedicalCenter, through='CrewMedicalExamination')
     education_center = models.ManyToManyField(EducationCenter, through='CrewEducation')
-    vessel = models.ManyToManyField(Vessel, through='CrewChange')
-    rank = models.ManyToManyField(Rank, through='CrewPosition')
+    rank = models.ForeignKey(Rank, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f'{self.name} {self.father_name} {self.surname}'
+        return f'{self.name} {self.surname} - {self.rank}'
 
-    def get_rank(self):
-        return ','.join(
-            [
-                rank for rank in self.rank.filter(crewposition__hired_to__isnull=True)
-                .values_list('name', flat=True).all()
-            ]
-        )
-
-    def get_vessel(self):
-        return ','.join(
-            [
-                vsl for vsl in self.vessel.filter(crewchange__signed_off__isnull=True)
-                .values_list('name', flat=True).all()
-            ]
-        )
+    # def get_rank(self):
+    #     return ','.join(
+    #         [
+    #             rank for rank in self.rank.filter(crewposition__hired_to__isnull=True)
+    #             .values_list('name', flat=True).all()
+    #         ]
+    #     )
+    #
+    # def get_vessel(self):
+    #     return ','.join(
+    #         [
+    #             vsl for vsl in self.vessel.filter(crewchange__signed_off__isnull=True)
+    #             .values_list('name', flat=True).all()
+    #         ]
+    #     )
 
 
 class CrewCertification(models.Model):
@@ -148,6 +148,10 @@ class CrewChange(models.Model):
                                         blank=True,
                                         on_delete=models.CASCADE,
                                         related_name='leave_port')
+    manager = models.ForeignKey(Employee, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f'{self.crew} - {self.vessel}'
 
     class Meta:
         verbose_name = 'crew change'
@@ -155,39 +159,23 @@ class CrewChange(models.Model):
             models.UniqueConstraint(fields=['crew', 'signed_on_date', 'signed_on_port'], name='unique_crew_change')
         ]
 
-    @admin.display(description='crew member')
-    def get_crew(self):
-        return self.crew
 
-    @admin.display(description='vessel')
-    def get_vessel(self):
-        return self.vessel
-
-    @admin.display(description='joining port')
-    def get_signed_on_port(self):
-        return self.signed_on_port
-
-    @admin.display(description='leaving port')
-    def get_signed_off_port(self):
-        return self.signed_off_port
-
-
-class CrewPosition(models.Model):
-    crew = models.ForeignKey(CrewMember, on_delete=models.CASCADE)
-    rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
-    hired_from = models.DateField()
-    hired_to = models.DateField(null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['crew', 'hired_from'], name='unique_hire')
-        ]
-
-    def get_crew(self):
-        return self.crew
-
-    def get_rank(self):
-        return self.rank
+# class CrewPosition(models.Model):
+#     crew = models.ForeignKey(CrewMember, on_delete=models.CASCADE)
+#     rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
+#     hired_from = models.DateField()
+#     hired_to = models.DateField(null=True, blank=True)
+#
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=['crew', 'hired_from'], name='unique_hire')
+#         ]
+#
+#     def get_crew(self):
+#         return self.crew
+#
+#     def get_rank(self):
+#         return self.rank
 
 
 class SalaryMatrix(models.Model):
@@ -221,5 +209,26 @@ class Contract(models.Model):
 
     def get_crew(self):
         return self.crew
+
+
+class VesselsSchedule(models.Model):
+    vessel_id = models.IntegerField()
+    vessel_name = models.CharField(max_length=25)
+    fleet = models.CharField(max_length=30)
+    departure_port = models.CharField(max_length=50)
+    destination_port = models.CharField(max_length=50)
+    eta = models.DateTimeField()
+    agency = models.CharField(max_length=50)
+    type = models.CharField(max_length=10)
+    voyage_num = models.CharField(max_length=15)
+    operation = models.CharField(max_length=15)
+    report_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'vessels_schedule'
+
+    def get_absolute_url(self):
+        return reverse('vessel_details', kwargs={'pk': self.vessel_id})
 
 

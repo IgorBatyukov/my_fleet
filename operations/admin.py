@@ -13,6 +13,16 @@ class VoyageAdmin(admin.ModelAdmin):
     list_display = ['voyage_num', 'get_vessel']
 
 
+@admin.register(models.DeparturePort)
+class DeparturePortAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.DestinationPort)
+class DestinationPortAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.CargoType)
 class CargoTypesAdmin(admin.ModelAdmin):
     list_display = ['name', 'imo_class']
