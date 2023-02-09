@@ -11,7 +11,7 @@ class Fleet(models.Model):
         ordering = ['name']
 
     def get_vessels(self):
-        return self.vessel_set.all()
+        return list(self.vessel_set.all())
 
 
 class VesselType(models.Model):
@@ -51,6 +51,9 @@ class Vessel(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
     def get_fleet(self):
         return self.fleet
