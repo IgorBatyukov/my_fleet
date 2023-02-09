@@ -4,7 +4,7 @@ from . import models
 
 @admin.register(models.CrewMember)
 class CrewMemberAdmin(admin.ModelAdmin):
-    list_display = ['name', 'surname', 'get_rank', 'working_status', 'get_vessel']
+    list_display = ['name', 'surname', 'rank', 'working_status']
 
 
 @admin.register(models.Rank)
@@ -34,17 +34,17 @@ class CrewMedicalExaminationAdmin(admin.ModelAdmin):
 
 @admin.register(models.CrewChange)
 class CrewChangeAdmin(admin.ModelAdmin):
-    list_display = ['get_crew',
-                    'get_vessel',
+    list_display = ['crew',
+                    'vessel',
                     'signed_on_date',
                     'signed_off_date',
-                    'get_signed_on_port',
-                    'get_signed_off_port']
+                    'signed_on_port',
+                    'signed_off_port']
 
 
-@admin.register(models.CrewPosition)
-class CrewPositionAdmin(admin.ModelAdmin):
-    list_display = ['get_crew', 'get_rank', 'hired_from', 'hired_to']
+# @admin.register(models.CrewPosition)
+# class CrewPositionAdmin(admin.ModelAdmin):
+#     list_display = ['get_crew', 'get_rank', 'hired_from', 'hired_to']
 
 
 @admin.register(models.SalaryMatrix)
