@@ -1,0 +1,49 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+  <div class="w3-quarter">
+    <h5>Vessel details</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Vessel's name</b></td>
+            <td>{{ vessel.vessel_name }}</td>
+        </tr>
+        <tr>
+            <td><b>Voyage number</b></td>
+            <td>{{ vessel.voyage_num }}</td>
+        </tr>
+        <tr>
+            <td><b>Last port</b></td>
+            <td>{{ vessel.departure_port }}</td>
+        </tr>
+        <tr>
+            <td><b>Next port</b></td>
+            <td>{{ vessel.destination_port }}</td>
+        </tr>
+        <tr>
+            <td><b>Last position reported</b></td>
+            <td>{{ vessel.report_date }}</td>
+        </tr>
+        <tr>
+            <td><b>Current status</b></td>
+            <td>{{ vessel.operation }}</td>
+        </tr>
+        <tr>
+            <td><b>Agency</b></td>
+            <td>{{ vessel.agency }}</td>
+        </tr>
+    </table><br>
+  </div>
+
+    <div class="w3-twothird">
+        <h5>Crew on board the vessel</h5>
+        <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+            <tr>
+                <td><b>Name</b></td>
+                <td><b>Rank</b></td>
+                <td><b>Contract expires on</b></td>
+                <td><b>Contract offset</b></td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

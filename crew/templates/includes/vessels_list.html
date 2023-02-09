@@ -1,0 +1,20 @@
+  <div class="w3-container">
+    <h5>Vessels</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Vessel's name</b></td>
+            <td><b>Last port</b></td>
+            <td><b>Next port</b></td>
+            <td><b>ETA</b></td>
+        </tr>
+
+      {% for vessel in vessels %}
+      <tr>
+        <td><a href="{{ vessel.get_absolute_url }}">{{ vessel.vessel_name }}</a></td>
+          <td>{{ vessel.departure_port }}</td>
+          <td>{{ vessel.destination_port }}</td>
+          <td>{{ vessel.eta }}</td>
+      </tr>
+      {% endfor %}
+    </table><br>
+  </div>
