@@ -1,0 +1,50 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+  <div class="w3-quarter">
+    <h5>Details</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Vessel</b></td>
+            <td>{{ change_info.vessel }}</td>
+        </tr>
+        <tr>
+            <td><b>Date</b></td>
+            <td>{{ change_info.date }}</td>
+        </tr>
+        <tr>
+            <td><b>Type</b></td>
+            <td>{{ change_info.type }}</td>
+        </tr>
+        <tr>
+            <td><b>Location</b></td>
+            <td>{{ change_info.port }}</td>
+        </tr>
+        <tr>
+            <td><b>Agency</b></td>
+            <td>{{ change_info.agency }}</td>
+        </tr>
+    </table><br>
+  </div>
+
+    <div class="w3-threequarter">
+        <h5>Crew Members</h5>
+        <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+            <tr>
+                <td><b>Name</b></td>
+                <td><b>Rank</b></td>
+                <td><b>Date of birth</b></td>
+                <td><b>Phone number</b></td>
+            </tr>
+            {% for crew in crew_change %}
+            <tr>
+                <td>{{ crew.crew.name }} {{ crew.crew.father_name }} {{ crew.crew.surname }}</td>
+                <td>{{ crew.crew.rank.name }}</td>
+                <td>{{ crew.crew.birth_date }}</td>
+                <td>{{ crew.crew.phone }}</td>
+            </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

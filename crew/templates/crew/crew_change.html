@@ -1,0 +1,29 @@
+{% extends 'crew/home.html' %}
+
+{% block title %} Crew Changes {% endblock %}
+
+{% block content %}
+
+<div class="w3-container">
+    <h5>Crew changes of your vessels' group</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Date</b></td>
+            <td><b>Vessel</b></td>
+            <td><b>Port</b></td>
+            <td><b>Type of crew change</b></td>
+            <td><b>Crew Members</b></td>
+        </tr>
+        {% for change in crew_changes_agg %}
+        <tr>
+            <td><a href="{% url 'crew_change_details' change.vessel__name change.date change.port__name change.type %}">{{ change.date }}</a></td>
+            <td>{{ change.vessel__name }}</td>
+            <td>{{ change.port__name }}</td>
+            <td>{{ change.type }}</td>
+            <td>{{ change.crew }}</td>
+        </tr>
+        {% endfor %}
+    </table><br>
+</div>
+
+{% endblock %}
