@@ -4,7 +4,9 @@ from . import models
 
 @admin.register(models.CrewMember)
 class CrewMemberAdmin(admin.ModelAdmin):
-    list_display = ['name', 'surname', 'rank', 'working_status']
+    list_display = ['name', 'surname', 'rank', 'working_status', 'fleet']
+    list_editable = ['fleet']
+    list_per_page = 10
 
 
 @admin.register(models.Rank)
@@ -24,7 +26,7 @@ class CertificationMatrixAdmin(admin.ModelAdmin):
 
 @admin.register(models.CrewCertification)
 class CrewCertificationAdmin(admin.ModelAdmin):
-    list_display = ['get_crew', 'get_certificate', 'valid_to']
+    list_display = ['crew', 'cert', 'valid_to']
 
 
 @admin.register(models.CrewMedicalExamination)
@@ -36,15 +38,10 @@ class CrewMedicalExaminationAdmin(admin.ModelAdmin):
 class CrewChangeAdmin(admin.ModelAdmin):
     list_display = ['crew',
                     'vessel',
-                    'signed_on_date',
-                    'signed_off_date',
-                    'signed_on_port',
-                    'signed_off_port']
-
-
-# @admin.register(models.CrewPosition)
-# class CrewPositionAdmin(admin.ModelAdmin):
-#     list_display = ['get_crew', 'get_rank', 'hired_from', 'hired_to']
+                    'date',
+                    'port',
+                    'type',
+                    'manager']
 
 
 @admin.register(models.SalaryMatrix)
@@ -54,4 +51,4 @@ class SalaryMatrixAdmin(admin.ModelAdmin):
 
 @admin.register(models.Contract)
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ['manager', 'get_crew', 'duration', 'offset', 'signed_date']
+    list_display = ['manager', 'crew', 'duration', 'offset', 'signed_date']
