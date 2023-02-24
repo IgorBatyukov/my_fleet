@@ -1,8 +1,12 @@
 {% extends 'crew/home.html' %}
 
+{% block title%}
+{{ vessel.vessel_name }}
+{% endblock %}
+
 {% block content %}
   <div class="w3-quarter">
-    <h5>Vessel details</h5>
+    <h5>Vessel "{{ vessel.vessel_name }}" details</h5>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
         <tr>
             <td><b>Vessel's name</b></td>
@@ -35,14 +39,26 @@
     </table><br>
   </div>
 
-    <div class="w3-twothird">
+    <div class="w3-threequarter">
         <h5>Crew on board the vessel</h5>
         <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
             <tr>
                 <td><b>Name</b></td>
                 <td><b>Rank</b></td>
+                <td><b>Joined</b></td>
                 <td><b>Contract expires on</b></td>
                 <td><b>Contract offset</b></td>
+
+                {% for crew in crew_onboard %}
+            <tr>
+                <td><a href="{{ crew.get_absolute_url }}">{{ crew.crew_name }}</a></td>
+                <td>{{ crew.rank }}</td>
+                <td>{{ crew.joined_date }}</td>
+                <td>{{ crew.contract_exp }}</td>
+                <td>{{ crew.offset }} months</td>
+            </tr>
+                {% endfor %}
+
             </tr>
         </table>
     </div>
