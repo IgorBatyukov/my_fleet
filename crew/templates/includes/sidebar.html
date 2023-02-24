@@ -14,8 +14,8 @@
   <div class="w3-bar-block">
     <a href="{% url 'crewing_home' %}" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Overview</a>
     <a href="{% url 'crewing_vessels' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Vessels</a>
-    <a href="crew" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Crew Members</a>
-    <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Crew Changes</a>
+    <a href="{% url 'crew' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Crew Members</a>
+    <a href="{% url 'crew_change' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Crew Changes</a>
     <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-diamond fa-fw"></i>  Contracts</a>
     <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bell fa-fw"></i>  Notifications</a>
 <!--    <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bank fa-fw"></i>  General</a>-->
