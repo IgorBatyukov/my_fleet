@@ -1,0 +1,66 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+  <div class="w3-quarter">
+    <h5>Personal infomation</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Name</b></td>
+            <td>{{ crew_member.name }}</td>
+        </tr>
+        <tr>
+            <td><b>Father's name</b></td>
+            <td>{{ crew_member.father_name }}</td>
+        </tr>
+        <tr>
+            <td><b>Surname</b></td>
+            <td>{{ crew_member.surname }}</td>
+        </tr>
+        <tr>
+            <td><b>Birth date</b></td>
+            <td>{{ crew_member.birth_date }}</td>
+        </tr>
+        <tr>
+            <td><b>Phone number</b></td>
+            <td>{{ crew_member.phone }}</td>
+        </tr>
+        <tr>
+            <td><b>E-mail</b></td>
+            <td>{{ crew_member.email }}</td>
+        </tr>
+        <tr>
+            <td><b>Location</b></td>
+            <td>{{ crew_member.location }}</td>
+        </tr>
+        <tr>
+            <td><b>Marital status</b></td>
+            <td>{{ crew_member.get_marriage_status_display }}</td>
+        </tr>
+        <tr>
+            <td><b>Working status</b></td>
+            <td>{{ crew_member.get_working_status_display }}</td>
+        </tr>
+    </table><br>
+  </div>
+
+    <div class="w3-threequarter">
+        <h5>Certification</h5>
+        <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+            <tr>
+                <td><b>Certificate</b></td>
+                <td><b>Number</b></td>
+                <td><b>Issued on</b></td>
+                <td><b>Expires on</b></td>
+            </tr>
+            {% for cert in certificates %}
+            <tr>
+                <td>{{ cert.cert }}</td>
+                <td>{{ cert.cert_number }}</td>
+                <td>{{ cert.valid_from }}</td>
+                <td>{{ cert.valid_to }}</td>
+            </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+
+<div class="w3-container">
+    <h5>Crew list of your vessels' group</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Name</b></td>
+            <td><b>Rank</b></td>
+            <td><b>Working status</b></td>
+            <td><b>Vessel</b></td>
+        </tr>
+        {% for crew in crew_list %}
+        <tr>
+            <td><a href="{{ crew.get_absolute_url }}">{{ crew.crew_name }}</a></td>
+            <td>{{ crew.rank }}</td>
+            <td>{{ crew.working_status }}</td>
+            <td>{{ crew.vessel_name }}</td>
+        </tr>
+        {% endfor %}
+    </table><br>
+</div>
+
+{% endblock %}
+
