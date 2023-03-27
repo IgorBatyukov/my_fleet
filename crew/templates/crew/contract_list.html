@@ -1,0 +1,35 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+<div class="w3-container">
+    <a href="{% url 'contract_add' %}">Add new contract</a>
+    {% if not contracts %}
+    <h3>There are nothing to display</h3>
+    {% else %}
+    <h5>Contracts details</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Crew name</b></td>
+            <td><b>Crew rank</b></td>
+            <td><b>Vessel's name</b></td>
+            <td><b>Contract duration</b></td>
+            <td><b>Offset</b></td>
+            <td><b>Signed on</b></td>
+            <td><b>Finished on</b></td>
+        </tr>
+
+      {% for contract in contracts %}
+      <tr>
+          <td>{{ contract.crew.name }} {{ contract.crew.surname }}</td>
+          <td>{{ contract.rank }}</td>
+          <td>{{ contract.vessel }}</td>
+          <td>{{ contract.duration }}</td>
+          <td>{{ contract.offset }}</td>
+          <td>{{ contract.signed_date }}</td>
+          <td>{{ contract.finished_date }}</td>
+      </tr>
+      {% endfor %}
+    </table><br>
+    {% endif %}
+</div>
+{% endblock %}

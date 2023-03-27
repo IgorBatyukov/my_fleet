@@ -6,6 +6,11 @@
 
 <div class="w3-container">
     <h5>Crew changes of your vessels' group</h5>
+    {% if not crew_changes_agg%}
+    <h3>There were no crew changes. Nothing to display.</h3>
+    <a href="{% url 'crew_change_add' %}">Add your first crew change</a>
+    {% else %}
+    <a href="{% url 'crew_change_add' %}">Add new crew change</a>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
         <tr>
             <td><b>Date</b></td>
@@ -24,6 +29,7 @@
         </tr>
         {% endfor %}
     </table><br>
+    {% endif %}
 </div>
 
 {% endblock %}
