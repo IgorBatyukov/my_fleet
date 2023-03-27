@@ -1,11 +1,12 @@
 from django.db.models import Q, Count
 from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic import ListView, DetailView, TemplateView, UpdateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, DetailView, TemplateView, UpdateView, CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.list import MultipleObjectMixin, MultipleObjectTemplateResponseMixin
 
-from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange
+from .forms import CrewChangeForm, ContractForm
+from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract
 from fleet.models import Vessel
 
 
@@ -111,3 +112,24 @@ class CrewChangeDetailsView(ListView):
                                   'agency': agency
                                   }
         return context
+
+
+class CrewChangeAdd(CreateView):
+    template_name = 'crew/crew_change_add.html'
+    model = CrewChange
+    form_class = CrewChangeForm
+    success_url = reverse_lazy('crew_change')
+
+
+class ContractMainView(ListView):
+    template_name = 'crew/contract_list.html'
+    model = Contract
+    context_object_name = 'contracts'
+
+
+class ContractAdd(CreateView):
+    template_name = 'crew/contract_add.html'
+    model = Contract
+    form_class = ContractForm
+    success_url = reverse_lazy('contracts_list')
+
