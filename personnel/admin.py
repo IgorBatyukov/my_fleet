@@ -9,9 +9,9 @@ class PositionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'surname', 'phone', 'email']
+    pass
 
 
 @admin.register(models.EmployeePosition)
-class EmployeePosition(admin.ModelAdmin):
+class EmployeePositionAdmin(admin.ModelAdmin):
     list_display = ['get_employee', 'get_position', 'get_fleet']

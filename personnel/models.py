@@ -1,6 +1,7 @@
 from django.db import models
 from fleet.models import Fleet
 from geo.models import City
+from django.contrib.auth.models import User
 
 
 class Position(models.Model):
@@ -20,19 +21,13 @@ class Employee(models.Model):
         (SINGLE, 'Single'),
     ]
 
-    name = models.CharField(max_length=15)
-    father_name = models.CharField(max_length=20, null=True)
-    surname = models.CharField(max_length=25)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField()
     phone = models.CharField(max_length=20)
-    email = models.EmailField()
     location = models.ForeignKey(City, on_delete=models.DO_NOTHING)
-    marriage_status = models.CharField(max_length=7, choices=MARRIAGE_STATUS, default=SINGLE)
+    marital_status = models.CharField(max_length=7, choices=MARRIAGE_STATUS, default=SINGLE)
     position = models.ManyToManyField(Position, through='EmployeePosition', verbose_name='position')
     fleet = models.ManyToManyField(Fleet, through='EmployeePosition', verbose_name='fleet')
-
-    def __str__(self):
-        return f'{self.name} {self.father_name} {self.surname}'
 
 
 class EmployeePosition(models.Model):
