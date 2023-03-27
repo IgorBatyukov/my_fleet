@@ -14,5 +14,8 @@ urlpatterns = [
     path('crewchange/<str:vessel__name>/<date:date>/<str:port__name>/<str:type>',
          views.CrewChangeDetailsView.as_view(),
          name='crew_change_details'),
+    path('crewchange/add/', views.CrewChangeAdd.as_view(), name='crew_change_add'),
+    path('contracts/', views.ContractMainView.as_view(), name='contracts_list'),
+    path('contracts/add/', views.ContractAdd.as_view(), name='contract_add'),
 
 ]
