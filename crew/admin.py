@@ -4,7 +4,7 @@ from . import models
 
 @admin.register(models.CrewMember)
 class CrewMemberAdmin(admin.ModelAdmin):
-    list_display = ['name', 'surname', 'rank', 'working_status', 'fleet']
+    list_display = ['name', 'surname', 'rank', 'fleet']
     list_editable = ['fleet']
     list_per_page = 10
 
