@@ -1,13 +1,9 @@
 from django.db.models import Q, Count
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, DetailView, TemplateView, UpdateView, CreateView
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic.list import MultipleObjectMixin, MultipleObjectTemplateResponseMixin
-
-from .forms import CrewChangeForm, ContractForm
-from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract
-from fleet.models import Vessel
+from django.views.generic import ListView, DeleteView, TemplateView, UpdateView, CreateView
+from .forms import CrewChangeForm, ContractForm, CrewMemberEditForm, CrewCertificateEditForm, CrewCertificateAddForm
+from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification
 
 
 class CrewingMainView(TemplateView):
@@ -66,11 +62,6 @@ class CrewDetailsView(ListView):
         crew_member = queryset.get(id=crew_id)
         return crew_member
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['certificates'] = CrewMember.get_certificates(CrewMember.objects.get(id=self.kwargs['pk']))
-        return context
-
 
 class CrewChangeView(ListView):
     template_name = 'crew/crew_change.html'
@@ -115,10 +106,16 @@ class CrewChangeDetailsView(ListView):
 
 
 class CrewChangeAdd(CreateView):
-    template_name = 'crew/crew_change_add.html'
+    template_name = 'crew/edit.html'
     model = CrewChange
     form_class = CrewChangeForm
     success_url = reverse_lazy('crew_change')
+
+
+class CrewChangeAddOnVessel(CreateView):
+    template_name = 'crew/edit.html'
+    model = CrewChange
+    form_class = CrewChangeForm
 
 
 class ContractMainView(ListView):
@@ -128,8 +125,54 @@ class ContractMainView(ListView):
 
 
 class ContractAdd(CreateView):
-    template_name = 'crew/contract_add.html'
+    template_name = 'crew/edit.html'
     model = Contract
     form_class = ContractForm
     success_url = reverse_lazy('contracts_list')
 
+
+class ContractEdit(UpdateView):
+    template_name = 'crew/edit.html'
+    model = Contract
+    form_class = ContractForm
+    success_url = reverse_lazy('contracts_list')
+
+
+class CrewDetailsEditView(UpdateView):
+    template_name = 'crew/edit.html'
+    model = CrewMember
+    form_class = CrewMemberEditForm
+
+    def get_success_url(self):
+        return reverse('crew_member_details', kwargs={'pk': self.kwargs['pk']})
+
+
+class CrewCertificateEdit(UpdateView):
+    template_name = 'crew/edit.html'
+    model = CrewCertification
+    form_class = CrewCertificateEditForm
+
+    def get_success_url(self):
+        return reverse('crew_member_details', kwargs={'pk': self.kwargs['crew_id']})
+
+
+class CrewCertificateDelete(DeleteView):
+    model = CrewCertification
+
+    def get_success_url(self):
+        return reverse('crew_member_details', kwargs={'pk': self.kwargs['crew_id']})
+
+
+class CrewCertificateAdd(CreateView):
+    template_name = 'crew/edit.html'
+    model = CrewCertification
+    form_class = CrewCertificateAddForm
+
+    def get_success_url(self):
+        return reverse('crew_member_details', kwargs={'pk': self.kwargs['crew_id']})
+
+    def form_valid(self, form):
+        certificate = form.save(commit=False)
+        certificate.crew_id = self.kwargs['crew_id']
+        certificate.save()
+        return HttpResponseRedirect(self.get_success_url())
