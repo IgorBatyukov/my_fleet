@@ -27,6 +27,7 @@
           <td>{{ contract.offset }}</td>
           <td>{{ contract.signed_date }}</td>
           <td>{{ contract.finished_date }}</td>
+          <td><a href="{% url 'contract_edit' contract.pk %}">Edit</a></td>
       </tr>
       {% endfor %}
     </table><br>
