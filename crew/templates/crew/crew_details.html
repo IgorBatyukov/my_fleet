@@ -38,9 +38,14 @@
         </tr>
         <tr>
             <td><b>Working status</b></td>
-            <td>{{ crew_member.get_working_status_display }}</td>
+            <td>{{ crew_member.get_working_status }}</td>
+        </tr>
+        <tr>
+            <td><b>Vessel</b></td>
+            <td>{{ crew_member.get_vessel }}</td>
         </tr>
     </table><br>
+      <a href="{% url 'crew_personal_edit' crew_member.pk %}">Edit personal information</a>
   </div>
 
     <div class="w3-threequarter">
@@ -52,15 +57,19 @@
                 <td><b>Issued on</b></td>
                 <td><b>Expires on</b></td>
             </tr>
-            {% for cert in certificates %}
+            {% for cert in crew_member.get_certificates %}
             <tr>
                 <td>{{ cert.cert }}</td>
                 <td>{{ cert.cert_number }}</td>
                 <td>{{ cert.valid_from }}</td>
                 <td>{{ cert.valid_to }}</td>
+                <td><a href="{% url 'certificate_edit' crew_member.pk cert.pk %}">Edit</a></td>
+                <td><a href="{% url 'certificate_delete' crew_member.pk cert.pk %}">Delete</a></td>
             </tr>
 
             {% endfor %}
         </table>
+        <a href="{% url 'certificate_add' crew_member.pk %}">Add new certificate</a>
+
     </div>
 {% endblock %}
