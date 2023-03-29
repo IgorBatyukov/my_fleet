@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
-from fleet.models import Vessel, Fleet
+from fleet.models import Vessel, Fleet, VesselType
 from geo.models import City, EducationCenter, MedicalCenter, SeaPort
 from operations.models import Agency
 from personnel.models import Employee
@@ -20,7 +20,7 @@ class Rank(models.Model):
 
 
 class Certificate(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -29,20 +29,20 @@ class Certificate(models.Model):
 class CertificationMatrix(models.Model):
     rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
     certificate = models.ForeignKey(Certificate, on_delete=models.CASCADE)
+    vessel_type = models.ForeignKey(VesselType, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['rank', 'certificate'], name='unique_requirement')
+            models.UniqueConstraint(fields=['rank', 'certificate', 'vessel_type'], name='unique_requirement')
         ]
         verbose_name_plural = 'certification matrix'
 
-    @admin.display(description='rank')
-    def get_rank(self):
-        return self.rank
+    def __str__(self):
+        return f'{self.certificate} for {self.rank} on {self.vessel_type}'
 
-    @admin.display(description='certificate')
-    def get_certificate(self):
-        return self.certificate
+    @classmethod
+    def get_vessel_type_list(cls):
+        return cls.objects.values_list('vessel_type__name', flat=True).distinct()
 
 
 class CrewMember(models.Model):
