@@ -10,6 +10,7 @@ urlpatterns = [
     path('vessels/<int:pk>', views.VesselDetailsView.as_view(), name='vessel_details'),
     path('crew/', views.CrewListView.as_view(), name='crew'),
     path('crew/<int:pk>', views.CrewDetailsView.as_view(), name='crew_member_details'),
+    path('crew/<int:pk>/matrix/', views.CrewCertificationMatrixView.as_view(), name='crew_certification_matrix'),
     path('crew/<int:pk>/edit/', views.CrewDetailsEditView.as_view(), name='crew_personal_edit'),
     path('crew/<int:crew_id>/certificate/<int:pk>/edit/', views.CrewCertificateEdit.as_view(), name='certificate_edit'),
     path('crew/<int:crew_id>/certificate/<int:pk>/delete/', views.CrewCertificateDelete.as_view(), name='certificate_delete'),
