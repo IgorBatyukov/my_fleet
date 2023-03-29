@@ -1,4 +1,6 @@
 from django import forms
+
+from fleet.models import Vessel
 from .models import CrewChange, Contract, CrewMember, CrewCertification
 
 
@@ -9,6 +11,18 @@ class CrewChangeForm(forms.ModelForm):
 
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class CrewChangeOnVesselForm(forms.ModelForm):
+
+    class Meta:
+        model = CrewChange
+        fields = ['vessel', 'crew', 'date', 'port', 'type', 'agency', 'manager']
+
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'vessel': forms.HiddenInput(),
         }
 
 
