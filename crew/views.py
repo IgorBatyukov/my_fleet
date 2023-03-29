@@ -1,16 +1,21 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DeleteView, TemplateView, UpdateView, CreateView
-from .forms import CrewChangeForm, ContractForm, CrewMemberEditForm, CrewCertificateEditForm, CrewCertificateAddForm
-from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification
+
+from fleet.models import Vessel
+from .forms import CrewChangeForm, ContractForm, CrewMemberEditForm, CrewCertificateEditForm, CrewCertificateAddForm, \
+    CrewChangeOnVesselForm
+from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification, \
+    CertificationMatrix
 
 
-class CrewingMainView(TemplateView):
+class CrewingMainView(LoginRequiredMixin, TemplateView):
     template_name = 'crew/home.html'
 
 
-class VesselsMainView(ListView):
+class VesselsMainView(LoginRequiredMixin, ListView):
     template_name = 'crew/vessels.html'
     model = VesselsSchedule
     context_object_name = 'vessels'
@@ -21,7 +26,7 @@ class VesselsMainView(ListView):
         return fleet_vessels
 
 
-class VesselDetailsView(ListView):
+class VesselDetailsView(LoginRequiredMixin, ListView):
     template_name = 'crew/vessel_details.html'
     model = VesselsSchedule
     context_object_name = 'vessel'
@@ -39,7 +44,7 @@ class VesselDetailsView(ListView):
         return context
 
 
-class CrewListView(ListView):
+class CrewListView(LoginRequiredMixin, ListView):
     template_name = 'crew/crew_list.html'
     model = CrewList
     context_object_name = 'crew_list'
@@ -51,7 +56,7 @@ class CrewListView(ListView):
         return crew_list
 
 
-class CrewDetailsView(ListView):
+class CrewDetailsView(LoginRequiredMixin, ListView):
     template_name = 'crew/crew_details.html'
     model = CrewMember
     context_object_name = 'crew_member'
@@ -63,7 +68,18 @@ class CrewDetailsView(ListView):
         return crew_member
 
 
-class CrewChangeView(ListView):
+class CrewCertificationMatrixView(LoginRequiredMixin, ListView):
+    template_name = 'crew/crew_certification_matrix.html'
+    model = CertificationMatrix
+    context_object_name = 'matrix'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['vessel_types'] = CertificationMatrix.get_vessel_type_list()
+        return context
+
+
+class CrewChangeView(LoginRequiredMixin, ListView):
     template_name = 'crew/crew_change.html'
     model = CrewChange
     context_object_name = 'crew_changes'
@@ -74,7 +90,7 @@ class CrewChangeView(ListView):
         return context
 
 
-class CrewChangeDetailsView(ListView):
+class CrewChangeDetailsView(LoginRequiredMixin, ListView):
     template_name = 'crew/crew_change_details.html'
     model = CrewChange
     context_object_name = 'crew_change'
@@ -105,40 +121,49 @@ class CrewChangeDetailsView(ListView):
         return context
 
 
-class CrewChangeAdd(CreateView):
+class CrewChangeAdd(LoginRequiredMixin, CreateView):
     template_name = 'crew/edit.html'
     model = CrewChange
     form_class = CrewChangeForm
     success_url = reverse_lazy('crew_change')
 
 
-class CrewChangeAddOnVessel(CreateView):
+class CrewChangeAddOnVessel(LoginRequiredMixin, CreateView):
     template_name = 'crew/edit.html'
     model = CrewChange
-    form_class = CrewChangeForm
+    form_class = CrewChangeOnVesselForm
+
+    def get_success_url(self):
+        return reverse('vessel_details', kwargs={'pk': self.kwargs['vessel_id']})
+
+    def get_initial(self):
+        initial = super().get_initial()
+        vessel_id = self.kwargs['vessel_id']
+        initial['vessel'] = Vessel.objects.get(id=vessel_id)
+        return initial
 
 
-class ContractMainView(ListView):
+class ContractMainView(LoginRequiredMixin, ListView):
     template_name = 'crew/contract_list.html'
     model = Contract
     context_object_name = 'contracts'
 
 
-class ContractAdd(CreateView):
+class ContractAdd(LoginRequiredMixin, CreateView):
     template_name = 'crew/edit.html'
     model = Contract
     form_class = ContractForm
     success_url = reverse_lazy('contracts_list')
 
 
-class ContractEdit(UpdateView):
+class ContractEdit(LoginRequiredMixin, UpdateView):
     template_name = 'crew/edit.html'
     model = Contract
     form_class = ContractForm
     success_url = reverse_lazy('contracts_list')
 
 
-class CrewDetailsEditView(UpdateView):
+class CrewDetailsEditView(LoginRequiredMixin, UpdateView):
     template_name = 'crew/edit.html'
     model = CrewMember
     form_class = CrewMemberEditForm
@@ -147,7 +172,7 @@ class CrewDetailsEditView(UpdateView):
         return reverse('crew_member_details', kwargs={'pk': self.kwargs['pk']})
 
 
-class CrewCertificateEdit(UpdateView):
+class CrewCertificateEdit(LoginRequiredMixin, UpdateView):
     template_name = 'crew/edit.html'
     model = CrewCertification
     form_class = CrewCertificateEditForm
@@ -156,14 +181,14 @@ class CrewCertificateEdit(UpdateView):
         return reverse('crew_member_details', kwargs={'pk': self.kwargs['crew_id']})
 
 
-class CrewCertificateDelete(DeleteView):
+class CrewCertificateDelete(LoginRequiredMixin, DeleteView):
     model = CrewCertification
 
     def get_success_url(self):
         return reverse('crew_member_details', kwargs={'pk': self.kwargs['crew_id']})
 
 
-class CrewCertificateAdd(CreateView):
+class CrewCertificateAdd(LoginRequiredMixin, CreateView):
     template_name = 'crew/edit.html'
     model = CrewCertification
     form_class = CrewCertificateAddForm
