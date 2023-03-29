@@ -1,0 +1,28 @@
+{% extends 'crew/home.html' %}
+
+{% block content %}
+
+<div class="w3-container">
+    <h5>Certification matrix</h5>
+    {% for vsl_type in vessel_types %}
+    {{ vsl_type }}
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Certificate</b></td>
+            <td><b>Crew rank</b></td>
+            <td><b>Vessel type</b></td>
+        </tr>
+        {% for vessel_type_matrix in matrix %}
+        {% if vessel_type_matrix.vessel_type|cut:" " == vsl_type|cut:" " %}
+        <tr>
+            <td>{{ vessel_type_matrix.certificate }}</td>
+            <td>{{ vessel_type_matrix.rank }}</td>
+            <td>{{ vessel_type_matrix.vessel_type }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table><br>
+    {% endfor %}
+</div>
+
+{% endblock %}
