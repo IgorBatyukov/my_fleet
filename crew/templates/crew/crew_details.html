@@ -1,8 +1,16 @@
 {% extends 'crew/home.html' %}
 
 {% block content %}
+  <div class="w3-bar" style="padding-top:25px; padding-left:10px; padding-bottom:15px">
+
+    <a href="{% url 'crew_personal_edit' crew_member.pk %}">Edit personal information</a> |
+    <a href="{% url 'certificate_add' crew_member.pk %}">Add new certificate</a> |
+    <a href="{% url 'crew_certification_matrix' crew_member.pk %}">Certification Matrix</a>
+
+  </div>
+
   <div class="w3-quarter">
-    <h5>Personal infomation</h5>
+    <h5><b>Personal information</b></h5>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
         <tr>
             <td><b>Name</b></td>
@@ -19,6 +27,10 @@
         <tr>
             <td><b>Birth date</b></td>
             <td>{{ crew_member.birth_date }}</td>
+        </tr>
+        <tr>
+            <td><b>Rank</b></td>
+            <td>{{ crew_member.rank }}</td>
         </tr>
         <tr>
             <td><b>Phone number</b></td>
@@ -45,11 +57,11 @@
             <td>{{ crew_member.get_vessel }}</td>
         </tr>
     </table><br>
-      <a href="{% url 'crew_personal_edit' crew_member.pk %}">Edit personal information</a>
+
   </div>
 
     <div class="w3-threequarter">
-        <h5>Certification</h5>
+        <h5><b>Certification</b></h5>
         <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
             <tr>
                 <td><b>Certificate</b></td>
@@ -69,7 +81,6 @@
 
             {% endfor %}
         </table>
-        <a href="{% url 'certificate_add' crew_member.pk %}">Add new certificate</a>
 
     </div>
 {% endblock %}
