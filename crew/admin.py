@@ -21,7 +21,7 @@ class CertificateAdmin(admin.ModelAdmin):
 
 @admin.register(models.CertificationMatrix)
 class CertificationMatrixAdmin(admin.ModelAdmin):
-    list_display = ['get_rank', 'get_certificate']
+    list_display = ['rank', 'certificate', 'vessel_type']
 
 
 @admin.register(models.CrewCertification)
