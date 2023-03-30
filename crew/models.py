@@ -1,4 +1,4 @@
-from django.contrib import admin, messages
+from datetime import datetime as dt
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count, Q
@@ -51,11 +51,6 @@ class CrewMember(models.Model):
     MARRIED = 'married'
     SINGLE = 'single'
 
-    # WORKING_STATUS = [
-    #     (AT_SEA, ),
-    #     (AT_HOME, ),
-    # ]
-
     MARRIAGE_STATUS = [
         (MARRIED, 'Married'),
         (SINGLE, 'Single'),
@@ -69,7 +64,6 @@ class CrewMember(models.Model):
     email = models.EmailField()
     location = models.ForeignKey(City, on_delete=models.DO_NOTHING)
     marriage_status = models.CharField(max_length=7, choices=MARRIAGE_STATUS, default=SINGLE)
-    # working_status = models.CharField(max_length=10, choices=WORKING_STATUS, default=AT_HOME)
     certificates = models.ManyToManyField(Certificate, through='CrewCertification')
     medical_center = models.ManyToManyField(MedicalCenter, through='CrewMedicalExamination')
     education_center = models.ManyToManyField(EducationCenter, through='CrewEducation')
@@ -82,14 +76,26 @@ class CrewMember(models.Model):
     def __str__(self):
         return f'{self.name} {self.surname} - {self.rank}'
 
+    @property
     def get_certificates(self):
         return self.crewcertification_set.all()
 
+    @property
+    def get_medical_examination(self):
+        for examination in self.crewmedicalexamination_set.all():
+            return examination if examination.is_valid else None
+
+    @property
+    def get_education_info(self):
+        pass
+
+    @property
     def get_working_status(self):
         return self.AT_SEA if self.pk in CrewOnBoard.objects.values_list('id', flat=True) else self.AT_HOME
 
+    @property
     def get_vessel(self):
-        if self.get_working_status() == self.AT_SEA:
+        if self.get_working_status == self.AT_SEA:
             return CrewOnBoard.objects.get(id=self.pk).vsl_name
         return None
 
@@ -109,6 +115,10 @@ class CrewCertification(models.Model):
     def __str__(self):
         return f'{self.cert} for {self.crew}'
 
+    @classmethod
+    def get_certificates_for_sailor(cls, sailor):
+        return cls.objects.filter(crew=sailor).values_list('cert', flat=True)
+
     def clean(self):
         if self.valid_from >= self.valid_to and self.valid_to:
             raise ValidationError('Date of issuance can not be greater than date of expiration')
@@ -126,11 +136,13 @@ class CrewMedicalExamination(models.Model):
             models.UniqueConstraint(fields=['crew', 'valid_from'], name='unique_examination')
         ]
 
-    def get_crew(self):
-        return self.crew
+    def __str__(self):
+        return f'{self.crew} at {self.med_center} ({self.valid_from} - {self.valid_to})'
 
-    def get_medical_center(self):
-        return self.med_center
+    @property
+    def is_valid(self):
+        today = dt.today().date()
+        return True if self.valid_to > today else False
 
 
 class CrewEducation(models.Model):
@@ -138,6 +150,9 @@ class CrewEducation(models.Model):
     crew_member = models.ForeignKey(CrewMember, on_delete=models.CASCADE)
     joined_date = models.DateField()
     graduated_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.crew_member} at {self.education_center} ({self.joined_date} - {self.graduated_date})'
 
 
 class CrewChange(models.Model):
