@@ -31,7 +31,7 @@ class CrewCertificationAdmin(admin.ModelAdmin):
 
 @admin.register(models.CrewMedicalExamination)
 class CrewMedicalExaminationAdmin(admin.ModelAdmin):
-    list_display = ['get_crew', 'get_medical_center', 'valid_to']
+    list_display = ['crew', 'med_center', 'valid_to', 'is_valid']
 
 
 @admin.register(models.CrewChange)
@@ -52,3 +52,8 @@ class SalaryMatrixAdmin(admin.ModelAdmin):
 @admin.register(models.Contract)
 class ContractAdmin(admin.ModelAdmin):
     list_display = ['manager', 'crew', 'duration', 'offset', 'signed_date']
+
+
+@admin.register(models.CrewEducation)
+class CrewEducationAdmin(admin.ModelAdmin):
+    list_display = ['education_center', 'crew_member', 'joined_date', 'graduated_date']
