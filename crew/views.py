@@ -1,12 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DeleteView, TemplateView, UpdateView, CreateView
 
 from fleet.models import Vessel
 from .forms import CrewChangeForm, ContractForm, CrewMemberEditForm, CrewCertificateEditForm, CrewCertificateAddForm, \
-    CrewChangeOnVesselForm
+    CrewChangeOnVesselForm, CrewCertificateAddSpecificForm
 from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification, \
     CertificationMatrix
 
@@ -73,9 +74,17 @@ class CrewCertificationMatrixView(LoginRequiredMixin, ListView):
     model = CertificationMatrix
     context_object_name = 'matrix'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        crew_rank = self.kwargs['rank_id']
+        cert_matrix = queryset.filter(rank=crew_rank)
+        return cert_matrix
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['vessel_types'] = CertificationMatrix.get_vessel_type_list()
+        context['certificates_for_sailor'] = CrewCertification.get_certificates_for_sailor(self.kwargs['pk'])
+        context['sailor'] = CrewMember.objects.get(id=self.kwargs['pk'])
         return context
 
 
@@ -199,5 +208,22 @@ class CrewCertificateAdd(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         certificate = form.save(commit=False)
         certificate.crew_id = self.kwargs['crew_id']
+        certificate.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CrewCertificateAddSpecificView(LoginRequiredMixin, CreateView):
+    template_name = 'crew/edit.html'
+    model = CrewCertification
+    form_class = CrewCertificateAddSpecificForm
+
+    def get_success_url(self):
+        next_url = self.request.POST.get('next', '/')
+        return next_url
+
+    def form_valid(self, form):
+        certificate = form.save(commit=False)
+        certificate.crew_id = self.kwargs['crew_id']
+        certificate.cert_id = self.kwargs['cert_id']
         certificate.save()
         return HttpResponseRedirect(self.get_success_url())
