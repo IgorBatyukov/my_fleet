@@ -3,14 +3,19 @@
 {% block content %}
 
 <div class="w3-container">
-    <h5>Certification matrix</h5>
+    <h5>Certification matrix's list</h5>
     {% for vsl_type in vessel_types %}
-    {{ vsl_type }}
+        <a href="#{{ vsl_type }}">{{ vsl_type|title }}</a>
+    {% endfor %}
+    <br><br>
+    {% for vsl_type in vessel_types %}
+    <a id="{{ vsl_type }}"><b>{{ vsl_type|title }} certification matrix for {{ sailor }}</b></a><br>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
         <tr>
             <td><b>Certificate</b></td>
             <td><b>Crew rank</b></td>
             <td><b>Vessel type</b></td>
+            <td><b>Sailor has certificate</b></td>
         </tr>
         {% for vessel_type_matrix in matrix %}
         {% if vessel_type_matrix.vessel_type|cut:" " == vsl_type|cut:" " %}
@@ -18,6 +23,12 @@
             <td>{{ vessel_type_matrix.certificate }}</td>
             <td>{{ vessel_type_matrix.rank }}</td>
             <td>{{ vessel_type_matrix.vessel_type }}</td>
+            {% if vessel_type_matrix.certificate_id in certificates_for_sailor %}
+            <td style="color:green">Yes</td>
+            {% else %}
+            <td>No /
+                <a href="{% url 'certificate_add_specific' sailor.pk vessel_type_matrix.certificate_id %}?next={{ request.path|urlencode }}">Add</a> </td>
+            {% endif %}
         </tr>
         {% endif %}
         {% endfor %}
