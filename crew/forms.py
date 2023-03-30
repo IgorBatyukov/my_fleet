@@ -1,6 +1,4 @@
 from django import forms
-
-from fleet.models import Vessel
 from .models import CrewChange, Contract, CrewMember, CrewCertification
 
 
@@ -70,6 +68,18 @@ class CrewCertificateAddForm(forms.ModelForm):
     class Meta:
         model = CrewCertification
         fields = ['cert', 'cert_number', 'valid_from', 'valid_to']
+
+        widgets = {
+            'valid_from': forms.DateInput(attrs={'type': 'date'}),
+            'valid_to': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class CrewCertificateAddSpecificForm(forms.ModelForm):
+
+    class Meta:
+        model = CrewCertification
+        fields = ['cert_number', 'valid_from', 'valid_to']
 
         widgets = {
             'valid_from': forms.DateInput(attrs={'type': 'date'}),
