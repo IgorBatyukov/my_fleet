@@ -4,11 +4,12 @@
   <div class="w3-bar" style="padding-top:25px; padding-left:10px; padding-bottom:15px">
 
     <a href="{% url 'crew_personal_edit' crew_member.pk %}">Edit personal information</a> |
+    <a href="#">Edit medical examination information</a> |
+    <a href="#">Edit education information</a> |
     <a href="{% url 'certificate_add' crew_member.pk %}">Add new certificate</a> |
-    <a href="{% url 'crew_certification_matrix' crew_member.pk %}">Certification Matrix</a>
+    <a href="{% url 'crew_certification_matrix' crew_member.pk crew_member.rank_id%}">Certification Matrix</a>
 
   </div>
-
   <div class="w3-quarter">
     <h5><b>Personal information</b></h5>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
@@ -38,7 +39,77 @@
         </tr>
         <tr>
             <td><b>E-mail</b></td>
-            <td>{{ crew_member.email }}</td>
+            <td><a href="mailto:{{ crew_member.email }}">{{ crew_member.email }}</a></td>
+        </tr>
+        <tr>
+            <td><b>Location</b></td>
+            <td>{{ crew_member.location }}</td>
+        </tr>
+        <tr>
+            <td><b>Marital status</b></td>
+            <td>{{ crew_member.get_marriage_status_display }}</td>
+        </tr>
+        <tr>
+            <td><b>Working status</b></td>
+            <td>{{ crew_member.get_working_status }}</td>
+        </tr>
+        <tr>
+            <td><b>Vessel</b></td>
+            <td>{{ crew_member.get_vessel }}</td>
+        </tr>
+    </table><br>
+
+      <h5><b>Medical examination information</b></h5>
+      {% if crew_member.get_medical_examination %}
+      {% with examination=crew_member.get_medical_examination%}
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Medical center</b></td>
+            <td>{{ examination.med_center }}</td>
+        </tr>
+        <tr>
+            <td><b>Valid from</b></td>
+            <td>{{ examination.valid_from }}</td>
+        </tr>
+        <tr>
+            <td><b>Valid to</b></td>
+            <td>{{ examination.valid_to }}</td>
+        </tr>
+      </table><br>
+      {% endwith %}
+      {% else %}
+      <h5>No valid examination found</h5>
+      <a href="#">Add new medical examination for the sailor</a><hr>
+      {% endif %}
+      <h5><b>Education information</b></h5>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <tr>
+            <td><b>Name</b></td>
+            <td>{{ crew_member.name }}</td>
+        </tr>
+        <tr>
+            <td><b>Father's name</b></td>
+            <td>{{ crew_member.father_name }}</td>
+        </tr>
+        <tr>
+            <td><b>Surname</b></td>
+            <td>{{ crew_member.surname }}</td>
+        </tr>
+        <tr>
+            <td><b>Birth date</b></td>
+            <td>{{ crew_member.birth_date }}</td>
+        </tr>
+        <tr>
+            <td><b>Rank</b></td>
+            <td>{{ crew_member.rank }}</td>
+        </tr>
+        <tr>
+            <td><b>Phone number</b></td>
+            <td>{{ crew_member.phone }}</td>
+        </tr>
+        <tr>
+            <td><b>E-mail</b></td>
+            <td><a href="mailto:{{ crew_member.email }}">{{ crew_member.email }}</a></td>
         </tr>
         <tr>
             <td><b>Location</b></td>
@@ -60,7 +131,7 @@
 
   </div>
 
-    <div class="w3-threequarter">
+  <div class="w3-threequarter">
         <h5><b>Certification</b></h5>
         <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
             <tr>
@@ -82,5 +153,6 @@
             {% endfor %}
         </table>
 
-    </div>
+  </div>
+
 {% endblock %}
