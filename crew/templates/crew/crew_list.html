@@ -8,6 +8,7 @@
         <tr>
             <td><b>Name</b></td>
             <td><b>Rank</b></td>
+            <td><b>Fleet</b></td>
             <td><b>Working status</b></td>
             <td><b>Vessel</b></td>
         </tr>
@@ -15,6 +16,7 @@
         <tr>
             <td><a href="{{ crew.get_absolute_url }}">{{ crew.crew_name }}</a></td>
             <td>{{ crew.rank }}</td>
+            <td>{{ crew.fleet_name }}</td>
             <td>{{ crew.working_status }}</td>
             <td>{{ crew.vessel_name }}</td>
         </tr>
