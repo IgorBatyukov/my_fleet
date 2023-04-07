@@ -29,6 +29,12 @@ class Employee(models.Model):
     position = models.ManyToManyField(Position, through='EmployeePosition', verbose_name='position')
     fleet = models.ManyToManyField(Fleet, through='EmployeePosition', verbose_name='fleet')
 
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+
+    def get_fleet_list(self):
+        return self.employeeposition_set.filter(hired_to__isnull=True).values_list('fleet__name', flat=True)
+
 
 class EmployeePosition(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
@@ -42,11 +48,5 @@ class EmployeePosition(models.Model):
             models.UniqueConstraint(fields=['employee', 'hired_from'], name='unique_employee_position')
         ]
 
-    def get_employee(self):
-        return self.employee
-
-    def get_position(self):
-        return self.position
-
-    def get_fleet(self):
-        return self.fleet
+    def __str__(self):
+        return f'{self.employee} - {self.position} at {self.fleet} fleet'
