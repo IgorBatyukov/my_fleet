@@ -14,4 +14,4 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @admin.register(models.EmployeePosition)
 class EmployeePositionAdmin(admin.ModelAdmin):
-    list_display = ['get_employee', 'get_position', 'get_fleet']
+    pass
