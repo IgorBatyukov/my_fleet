@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DeleteView, TemplateView, UpdateView, CreateView
 
@@ -23,7 +22,9 @@ class VesselsMainView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        fleet_vessels = queryset.filter(fleet='A')
+        user = self.request.user
+        fleet_list = user.employee.get_fleet_list()
+        fleet_vessels = queryset.filter(fleet__in=fleet_list)
         return fleet_vessels
 
 
@@ -52,8 +53,9 @@ class CrewListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        fleet_id = 1
-        crew_list = queryset.filter(fleet_id=fleet_id)
+        user = self.request.user
+        fleet_list = user.employee.get_fleet_list()
+        crew_list = queryset.filter(fleet_name__in=fleet_list)
         return crew_list
 
 
