@@ -251,6 +251,7 @@ class VesselsSchedule(models.Model):
     class Meta:
         managed = False
         db_table = 'vessels_schedule'
+        ordering = ['vessel_name']
 
     def get_absolute_url(self):
         return reverse('vessel_details', kwargs={'pk': self.vessel_id})
@@ -288,6 +289,7 @@ class CrewList(models.Model):
     working_status = models.CharField(max_length=30)
     vessel_name = models.CharField(max_length=25)
     fleet_id = models.SmallIntegerField()
+    fleet_name = models.CharField(max_length=30)
     signed_date = models.DateField()
 
     class Meta:
