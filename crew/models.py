@@ -232,31 +232,6 @@ class Contract(models.Model):
         ]
 
 
-class VesselsSchedule(models.Model):
-    """
-    Materialized view model on aggregated data related to vessels' schedules
-    """
-    vessel_id = models.IntegerField()
-    vessel_name = models.CharField(max_length=25)
-    fleet = models.CharField(max_length=30)
-    departure_port = models.CharField(max_length=50)
-    destination_port = models.CharField(max_length=50)
-    eta = models.DateTimeField()
-    agency = models.CharField(max_length=50)
-    type = models.CharField(max_length=10)
-    voyage_num = models.CharField(max_length=15)
-    operation = models.CharField(max_length=15)
-    report_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'vessels_schedule'
-        ordering = ['vessel_name']
-
-    def get_absolute_url(self):
-        return reverse('vessel_details', kwargs={'pk': self.vessel_id})
-
-
 class CrewOnBoard(models.Model):
     """
     Materialized view model for aggregated data related to crew members who are currently at sea
