@@ -5,7 +5,23 @@ from django.contrib.auth.models import User
 
 
 class Position(models.Model):
+
+    OPS = 'operations'
+    CREW = 'crewing'
+    TECH = 'technical'
+    SAFETY = 'safety'
+    HEAD = 'director'
+
+    CATEGORY = [
+        (OPS, 'operations'),
+        (CREW, 'crewing'),
+        (TECH, 'technical'),
+        (SAFETY, 'safety'),
+        (HEAD, 'director'),
+    ]
+
     name = models.CharField(max_length=20)
+    category = models.CharField(max_length=15, choices=CATEGORY)
 
     def __str__(self):
         return self.name
@@ -34,6 +50,12 @@ class Employee(models.Model):
 
     def get_fleet_list(self):
         return self.employeeposition_set.filter(hired_to__isnull=True).values_list('fleet__name', flat=True)
+
+    def get_positions_list(self):
+        return self.employeeposition_set\
+            .filter(hired_to__isnull=True)\
+            .values_list('position__category', flat=True)\
+            .distinct()
 
 
 class EmployeePosition(models.Model):
