@@ -7,8 +7,9 @@ from django.views.generic import ListView, DeleteView, TemplateView, UpdateView,
 from fleet.models import Vessel
 from .forms import CrewChangeForm, ContractForm, CrewMemberEditForm, CrewCertificateEditForm, CrewCertificateAddForm, \
     CrewChangeOnVesselForm, CrewCertificateAddSpecificForm
-from .models import CrewMember, VesselsSchedule, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification, \
+from .models import CrewMember, CrewOnBoard, CrewList, CrewChange, Contract, CrewCertification, \
     CertificationMatrix
+from operations.models import VesselsSchedule
 
 
 class CrewingMainView(LoginRequiredMixin, TemplateView):
